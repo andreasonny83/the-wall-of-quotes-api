@@ -1,0 +1,26 @@
+{
+  "name": "the-wall-of-quotes-api",
+  "version": "1.0.0",
+  "description": "API for serving The wall of quotes webapp",
+  "main": "app/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreasonny83/the-wall-of-quotes-api.git"
+  },
+  "author": "Andrea Sonny <andreasonny83@gmail.com> (https://github.com/andreasonny83)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreasonny83/the-wall-of-quotes-api/issues"
+  },
+  "homepage": "https://github.com/andreasonny83/the-wall-of-quotes-api#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "kerberos": "0.0.22",
+    "morgan": "^1.7.0",
+    "pkginfo": "^0.4.0"
+  }
+}
