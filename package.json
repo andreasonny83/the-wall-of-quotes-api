@@ -19,6 +19,7 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "firebase-admin": "^4.0.3",
     "kerberos": "0.0.22",
     "morgan": "^1.7.0",
     "pkginfo": "^0.4.0"

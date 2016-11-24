@@ -12,12 +12,29 @@
 
 var router = require('express').Router();
 var pkginfo = require('pkginfo')(module);
+var firebase = require('firebase-admin');
 
 var appName = module.exports.name;
 var appVersion = module.exports.version;
 
+const quote = {
+  quote: '',
+  author: '',
+  creator: ''
+};
+
+firebase.initializeApp({
+  credential: firebase.credential.cert({
+    projectId: process.env.PROJECT_ID || 'xxx',
+    clientEmail: process.env.CLIENT_EMAIL || 'xxx',
+    privateKey: process.env.PRIVATE_KEY || 'xxx'
+  }),
+  databaseURL: process.env.DATABASE_URL || 'xxx'
+});
+
 // Routing logic
-router.get('/status', status);
+router.get('/status', status)
+.post('/add', add);
 
 // Private functions
 function status(req, res) {
@@ -29,6 +46,23 @@ function status(req, res) {
   };
 
   res.status(200).send(data);
+}
+
+function add(req, res) {
+  let quote = req.body.req || null;
+  let author = req.body.author || null;
+  let creator = req.body.creator || null;
+  let captcha = req.body.captcha || null;
+
+  console.log(req.body);
+
+  if (!quote || !author || !creator || !captcha) {
+    return res.status(401).send();
+  }
+
+  // firebase.database().ref('/quotes').push(model);
+  console.log('Timestamp', firebase.database.ServerValue.TIMESTAMP);
+  res.status(200).send();
 }
 
 module.exports = router;
