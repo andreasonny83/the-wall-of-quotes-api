@@ -11,10 +11,10 @@
 'use strict';
 
 const express = require('express');
-var router = require('express').Router();
+const router = require('express').Router();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-var admin = require('firebase-admin');
+const admin = require('firebase-admin');
 
 const environment = process.env.NODE_ENV || 'DEV';
 const serverPort = process.env.PORT || 3012;
@@ -55,6 +55,4 @@ server = app.listen(serverPort, function() {
     '__dirname = ' + __dirname,
     'process.cwd = ' + process.cwd()
   ].join('\n'));
-
-  console.log(process.env);
 });

@@ -10,9 +10,15 @@
  */
 'use strict';
 
-var router = require('express').Router();
-var pkginfo = require('pkginfo')(module);
-var firebase = require('firebase-admin');
+const router = require('express').Router();
+const pkginfo = require('pkginfo')(module);
+const firebase = require('firebase-admin');
+let serviceAccount;
+
+// serviceAccount stores the firebase serviceAccount configuration
+try {
+  serviceAccount = require('./serviceAccount.json');
+} catch (e) {}
 
 var appName = module.exports.name;
 var appVersion = module.exports.version;
@@ -25,11 +31,11 @@ const quote = {
 
 firebase.initializeApp({
   credential: firebase.credential.cert({
-    projectId: process.env.PROJECT_ID || 'xxx',
-    clientEmail: process.env.CLIENT_EMAIL || 'xxx',
-    privateKey: process.env.PRIVATE_KEY || 'xxx'
+    projectId: process.env.PROJECT_ID || serviceAccount.PROJECT_ID || 'PROJECT_ID',
+    clientEmail: process.env.CLIENT_EMAIL || serviceAccount.CLIENT_EMAIL || 'CLIENT_EMAIL',
+    privateKey: process.env.PRIVATE_KEY || serviceAccount.PRIVATE_KEY || 'PRIVATE_KEY'
   }),
-  databaseURL: process.env.DATABASE_URL || 'xxx'
+  databaseURL: process.env.DATABASE_URL || serviceAccount.DATABASE_URL || 'DATABASE_URL'
 });
 
 // Routing logic
