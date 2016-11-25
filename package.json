@@ -4,7 +4,7 @@
   "description": "API for serving The wall of quotes webapp",
   "main": "app/server.js",
   "scripts": {
-    "start": "node ./app/server.js",
+    "start": "nodemon ./app/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,5 +24,8 @@
     "kerberos": "0.0.22",
     "morgan": "^1.7.0",
     "pkginfo": "^0.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }

@@ -13,34 +13,42 @@
 const router = require('express').Router();
 const pkginfo = require('pkginfo')(module);
 const firebase = require('firebase-admin');
+const appName = module.exports.name;
+const appVersion = module.exports.version;
 let serviceAccount;
+let db;
+let ref;
 
 // serviceAccount stores the firebase serviceAccount configuration
 try {
-  serviceAccount = require('./serviceAccount.json');
+  serviceAccount = require('../serviceAccount.json');
 } catch (e) {}
 
-var appName = module.exports.name;
-var appVersion = module.exports.version;
-
-const quote = {
-  quote: '',
-  author: '',
-  creator: ''
-};
-
-firebase.initializeApp({
-  credential: firebase.credential.cert({
-    projectId: process.env.PROJECT_ID || serviceAccount.PROJECT_ID || 'PROJECT_ID',
-    clientEmail: process.env.CLIENT_EMAIL || serviceAccount.CLIENT_EMAIL || 'CLIENT_EMAIL',
-    privateKey: process.env.PRIVATE_KEY || serviceAccount.PRIVATE_KEY || 'PRIVATE_KEY'
-  }),
-  databaseURL: process.env.DATABASE_URL || serviceAccount.DATABASE_URL || 'DATABASE_URL'
-});
+_init();
 
 // Routing logic
-router.get('/status', status)
-.post('/add', add);
+router
+  .get('/status', status)
+  .post('/add', add);
+
+function _init() {
+  const databaseURL = process.env.DATABASE_URL || serviceAccount.DATABASE_URL || 'DATABASE_URL';
+
+  firebase.initializeApp({
+    credential: firebase.credential.cert({
+      projectId: process.env.PROJECT_ID || serviceAccount.PROJECT_ID || 'PROJECT_ID',
+      clientEmail: process.env.CLIENT_EMAIL || serviceAccount.CLIENT_EMAIL || 'CLIENT_EMAIL',
+      privateKey: process.env.PRIVATE_KEY || serviceAccount.PRIVATE_KEY || 'PRIVATE_KEY'
+    }),
+    databaseURL: databaseURL,
+    databaseAuthVariableOverride: {
+      uid: "my-service-worker"
+    }
+  });
+
+  db = firebase.database();
+  ref = db.ref('/quotes');
+}
 
 // Private functions
 function status(req, res) {
@@ -55,19 +63,19 @@ function status(req, res) {
 }
 
 function add(req, res) {
-  let quote = req.body.req || null;
-  let author = req.body.author || null;
-  let creator = req.body.creator || null;
+  let model = {
+    quote: req.body.quote || null,
+    author: req.body.author || null,
+    creator: req.body.creator || null
+  };
+
   let captcha = req.body.captcha || null;
 
-  console.log(req.body);
-
-  if (!quote || !author || !creator || !captcha) {
+  if (!model.quote || !model.author || !model.creator || !captcha) {
     return res.status(401).send();
   }
 
-  // firebase.database().ref('/quotes').push(model);
-  console.log('Timestamp', firebase.database.ServerValue.TIMESTAMP);
+  ref.push(model);
   res.status(200).send();
 }
 
