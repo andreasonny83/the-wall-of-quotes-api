@@ -15,6 +15,9 @@ const pkginfo = require('pkginfo')(module);
 const firebase = require('firebase-admin');
 const appName = module.exports.name;
 const appVersion = module.exports.version;
+const environment = process.env.NODE_ENV || 'DEV';
+const debug = process.env.DEBUG === true || environment === 'DEV';
+
 let serviceAccount;
 let db;
 let ref;
@@ -49,11 +52,13 @@ function _init() {
   db = firebase.database();
   ref = db.ref('/quotes');
 
-  console.log('start debug');
-  console.log(databaseURL);
-  console.log(process.env.PROJECT_ID);
-  console.log(process.env.CLIENT_EMAIL);
-  console.log(process.env.PRIVATE_KEY);
+  if (debug) {
+    console.log('start debug');
+    console.log('databaseURL', databaseURL);
+    console.log('PROJECT_ID', process.env.PROJECT_ID);
+    console.log('CLIENT_EMAIL', process.env.CLIENT_EMAIL);
+    console.log('PRIVATE_KEY', process.env.PRIVATE_KEY);
+  }
 }
 
 // Private functions
@@ -76,8 +81,11 @@ function add(req, res) {
     creator: req.body.creator || null
   };
 
-  console.log(captcha);
-  console.log(model);
+  if (debug) {
+    console.log('captcha:', captcha);
+    console.log('model:');
+    console.log(model);
+  }
 
   if (!model.quote || !model.author || !model.creator || !captcha) {
     return res.status(400).send();
