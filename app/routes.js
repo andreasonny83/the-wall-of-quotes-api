@@ -12,7 +12,8 @@
 
 const router = require('express').Router();
 const pkginfo = require('pkginfo')(module);
-const firebase = require('firebase-admin');
+// const firebase = require('firebase-admin');
+const firebase = require('firebase');
 const appName = module.exports.name;
 const appVersion = module.exports.version;
 const environment = process.env.NODE_ENV || 'DEV';
@@ -39,17 +40,25 @@ function _init() {
   const databaseURL = process.env.DATABASE_URL || serviceAccount.DATABASE_URL || 'DATABASE_URL';
   const clientEmail = process.env.CLIENT_EMAIL || serviceAccount.CLIENT_EMAIL || 'CLIENT_EMAIL';
   const privateKey = process.env.PRIVATE_KEY || serviceAccount.PRIVATE_KEY || 'PRIVATE_KEY';
+  const apiKey = process.env.API_KEY || serviceAccount.API_KEY || 'API_KEY';
+  const authDomain = process.env.AUTH_DOMAIN || serviceAccount.AUTH_DOMAIN || 'AUTH_DOMAIN';
+
+  // firebase.initializeApp({
+  //   credential: firebase.credential.cert({
+  //     projectId: projectId,
+  //     clientEmail: databaseURL,
+  //     privateKey: privateKey
+  //   }),
+  //   databaseURL: databaseURL,
+  //   databaseAuthVariableOverride: {
+  //     uid: 'my-service-worker'
+  //   }
+  // });
 
   firebase.initializeApp({
-    credential: firebase.credential.cert({
-      projectId: projectId,
-      clientEmail: databaseURL,
-      privateKey: privateKey
-    }),
-    databaseURL: databaseURL,
-    databaseAuthVariableOverride: {
-      uid: 'my-service-worker'
-    }
+    apiKey: apiKey,
+    authDomain: authDomain,
+    databaseURL: databaseURL
   });
 
   db = firebase.database();
@@ -66,7 +75,7 @@ function _init() {
 
 // Private functions
 function status(req, res) {
-  var user = firebase.auth();
+  var user = firebase.auth().currentUser;
   console.log(user);
   const data = {
     app: appName,

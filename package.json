@@ -26,6 +26,7 @@
     "pkginfo": "^0.4.0"
   },
   "devDependencies": {
+    "firebase": "^3.6.1",
     "nodemon": "^1.11.0"
   }
 }
