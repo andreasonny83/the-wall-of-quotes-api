@@ -42,6 +42,12 @@ app.use(function (req, res, next) {
   // Request headers you wish to allow
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
 
+  // Set custom headers for CORS
+  // res.setHeader("Access-Control-Allow-Headers", "Content-type,Accept,X-Custom-Header");
+
+  // whitelist
+  res.header('Access-Control-Allow-Origin', 'https://the-wall-of-quotes.firebaseapp.com/');
+
   next();
 });
 
