@@ -63,22 +63,15 @@ function status(req, res) {
 }
 
 function add(req, res) {
-  console.log('body:');
-  console.log(req.body);
-
+  let captcha = req.body.captcha || null;
   let model = {
     quote: req.body.quote || null,
     author: req.body.author || null,
     creator: req.body.creator || null
   };
 
-  let captcha = req.body.captcha || null;
-  console.log('model:');
-  console.log(model);
-  console.log('captcha', captcha);
-
   if (!model.quote || !model.author || !model.creator || !captcha) {
-    return res.status(401).send();
+    return res.status(400).send();
   }
 
   ref.push(model);

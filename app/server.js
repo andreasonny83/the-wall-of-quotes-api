@@ -31,7 +31,6 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 app.use(function (req, res, next) {
-  console.log('here');
   // res.header('Access-Control-Allow-Origin', 'https://the-wall-of-quotes.firebaseapp.com/');
 
   // Website you wish to allow to connect
@@ -40,7 +39,7 @@ app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Headers', 'X-Requested-With');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   // Request methods you wish to allow
-  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
 
   // res.setHeader("Access-Control-Allow-Origin", "*");
   // res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
