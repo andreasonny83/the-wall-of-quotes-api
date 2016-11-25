@@ -16,7 +16,7 @@ const firebase = require('firebase-admin');
 const appName = module.exports.name;
 const appVersion = module.exports.version;
 const environment = process.env.NODE_ENV || 'DEV';
-const debug = process.env.DEBUG === true || environment === 'DEV';
+const debug = process.env.DEBUG === 'true' || environment === 'DEV';
 
 let serviceAccount;
 let db;
@@ -54,17 +54,15 @@ function _init() {
 
   if (debug) {
     console.log('start debug');
-    console.log('databaseURL', databaseURL);
-    console.log('PROJECT_ID', process.env.PROJECT_ID);
-    console.log('CLIENT_EMAIL', process.env.CLIENT_EMAIL);
-    console.log('PRIVATE_KEY', process.env.PRIVATE_KEY);
+    console.log('databaseURL', databaseURL || serviceAccount.DATABASE_URL);
+    console.log('PROJECT_ID', process.env.PROJECT_ID || serviceAccount.PROJECT_ID);
+    console.log('CLIENT_EMAIL', process.env.CLIENT_EMAIL || serviceAccount.CLIENT_EMAIL);
+    console.log('PRIVATE_KEY', process.env.PRIVATE_KEY || serviceAccount.PRIVATE_KEY);
   }
 }
 
 // Private functions
 function status(req, res) {
-  console.log(process.env);
-
   const data = {
     app: appName,
     version: appVersion,
