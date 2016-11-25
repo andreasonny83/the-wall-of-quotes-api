@@ -35,17 +35,20 @@ router
   .post('/add', add);
 
 function _init() {
+  const projectId = process.env.PROJECT_ID || serviceAccount.PROJECT_ID || 'PROJECT_ID';
   const databaseURL = process.env.DATABASE_URL || serviceAccount.DATABASE_URL || 'DATABASE_URL';
+  const clientEmail = process.env.CLIENT_EMAIL || serviceAccount.CLIENT_EMAIL || 'CLIENT_EMAIL';
+  const privateKey = process.env.PRIVATE_KEY || serviceAccount.PRIVATE_KEY || 'PRIVATE_KEY';
 
   firebase.initializeApp({
     credential: firebase.credential.cert({
-      projectId: process.env.PROJECT_ID || serviceAccount.PROJECT_ID || 'PROJECT_ID',
-      clientEmail: process.env.CLIENT_EMAIL || serviceAccount.CLIENT_EMAIL || 'CLIENT_EMAIL',
-      privateKey: process.env.PRIVATE_KEY || serviceAccount.PRIVATE_KEY || 'PRIVATE_KEY'
+      projectId: projectId,
+      clientEmail: databaseURL,
+      privateKey: privateKey
     }),
     databaseURL: databaseURL,
     databaseAuthVariableOverride: {
-      uid: "my-service-worker"
+      uid: 'my-service-worker'
     }
   });
 
@@ -54,15 +57,17 @@ function _init() {
 
   if (debug) {
     console.log('start debug');
-    console.log('databaseURL', databaseURL || serviceAccount.DATABASE_URL);
-    console.log('PROJECT_ID', process.env.PROJECT_ID || serviceAccount.PROJECT_ID);
-    console.log('CLIENT_EMAIL', process.env.CLIENT_EMAIL || serviceAccount.CLIENT_EMAIL);
-    console.log('PRIVATE_KEY', process.env.PRIVATE_KEY || serviceAccount.PRIVATE_KEY);
+    console.log('databaseURL', databaseURL);
+    console.log('PROJECT_ID', projectId);
+    console.log('CLIENT_EMAIL', clientEmail);
+    console.log('PRIVATE_KEY', privateKey);
   }
 }
 
 // Private functions
 function status(req, res) {
+  var user = firebase.auth();
+  console.log(user);
   const data = {
     app: appName,
     version: appVersion,
@@ -85,6 +90,7 @@ function add(req, res) {
     console.log('captcha:', captcha);
     console.log('model:');
     console.log(model);
+    console.log(ref);
   }
 
   if (!model.quote || !model.author || !model.creator || !captcha) {
