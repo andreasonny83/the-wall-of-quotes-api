@@ -34,19 +34,19 @@ app.use('/', require('./routes'));
 
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', '*');
 
   // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
   // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
 
   // Set custom headers for CORS
   // res.setHeader("Access-Control-Allow-Headers", "Content-type,Accept,X-Custom-Header");
 
   // whitelist
-  res.header('Access-Control-Allow-Origin', 'https://the-wall-of-quotes.firebaseapp.com/');
+  // res.header('Access-Control-Allow-Origin', 'https://the-wall-of-quotes.firebaseapp.com/');
 
   next();
 });
