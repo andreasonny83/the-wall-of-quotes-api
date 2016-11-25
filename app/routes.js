@@ -63,6 +63,8 @@ function _init() {
 
 // Private functions
 function status(req, res) {
+  console.log(process.env);
+
   const data = {
     app: appName,
     version: appVersion,
