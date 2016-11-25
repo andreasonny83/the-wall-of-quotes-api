@@ -33,13 +33,14 @@ app.use(morgan('dev'));
 app.use('/', require('./routes'));
 
 app.use(function (req, res, next) {
-  header('Access-Control-Allow-Origin: *');
-  header('Access-Control-Allow-Methods: POST, OPTIONS');
-  // header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
-  // res.header('Access-Control-Allow-Origin', '*');
-  // res.header('Access-Control-Allow-Methods', 'POST,OPTIONS');
-  // res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
 
   next();
 });
