@@ -48,6 +48,12 @@ function _init() {
 
   db = firebase.database();
   ref = db.ref('/quotes');
+
+  console.log('start debug');
+  console.log(databaseURL);
+  console.log(process.env.PROJECT_ID);
+  console.log(process.env.CLIENT_EMAIL);
+  console.log(process.env.PRIVATE_KEY);
 }
 
 // Private functions
@@ -69,6 +75,9 @@ function add(req, res) {
     author: req.body.author || null,
     creator: req.body.creator || null
   };
+
+  console.log(captcha);
+  console.log(model);
 
   if (!model.quote || !model.author || !model.creator || !captcha) {
     return res.status(400).send();
