@@ -32,30 +32,20 @@ app.use(morgan('dev'));
 
 app.use(function (req, res, next) {
   console.log('here');
+  // res.header('Access-Control-Allow-Origin', 'https://the-wall-of-quotes.firebaseapp.com/');
+
   // Website you wish to allow to connect
-  // res.header('Access-Control-Allow-Origin', '*');
-  // Request methods you wish to allow
-  // res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.header('Access-Control-Allow-Origin', '*');
   // Request headers you wish to allow
-  // res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  // Set custom headers for CORS
-  // res.setHeader("Access-Control-Allow-Headers", "Content-type,Accept,X-Custom-Header");
-  // whitelist
-  // res.header('Access-Control-Allow-Origin', 'https://the-wall-of-quotes.firebaseapp.com/');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  // Request methods you wish to allow
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
 
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
-
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  // res.header('Access-Control-Allow-Origin', 'https://the-wall-of-quotes.firebaseapp.com/');
-  // res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  // res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  // res.setHeader("Access-Control-Allow-Origin", "*");
+  // res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  // res.setHeader('Access-Control-Allow-Credentials', true);
 
   next();
 });
