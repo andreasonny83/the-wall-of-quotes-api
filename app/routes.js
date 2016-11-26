@@ -12,7 +12,6 @@
 
 const router = require('express').Router();
 const pkginfo = require('pkginfo')(module);
-// const firebase = require('firebase-admin');
 const firebase = require('firebase');
 const appName = module.exports.name;
 const appVersion = module.exports.version;
@@ -31,8 +30,8 @@ try {
   serviceAccount.DATABASE_URL = process.env.DATABASE_URL || 'DATABASE_URL';
   serviceAccount.API_KEY = process.env.API_KEY || 'API_KEY';
   serviceAccount.AUTH_DOMAIN = process.env.AUTH_DOMAIN || 'AUTH_DOMAIN';
-  serviceAccount.EMAIL = process.env.EMAIL || 'EMAIL';
-  serviceAccount.PASSWORD = process.env.PASSWORD || 'PASSWORD';
+  serviceAccount.USER_EMAIL = process.env.USER_EMAIL || 'USER_EMAIL';
+  serviceAccount.USER_PASSWORD = process.env.USER_PASSWORD || 'USER_PASSWORD';
   serviceAccount.PROJECT_ID = process.env.PROJECT_ID || 'PROJECT_ID';
   serviceAccount.CLIENT_EMAIL = process.env.CLIENT_EMAIL || 'CLIENT_EMAIL';
   serviceAccount.PRIVATE_KEY = process.env.PRIVATE_KEY || 'PRIVATE_KEY';
@@ -49,20 +48,6 @@ function _init() {
   let errorCode;
   let errorMessage;
 
-  // firebase-admin
-  //
-  // firebase.initializeApp({
-  //   credential: firebase.credential.cert({
-  //     projectId: serviceAccount.PROJECT_ID,
-  //     clientEmail: serviceAccount.DATABASE_URL,
-  //     privateKey: serviceAccount.PRIVATE_KEY
-  //   }),
-  //   databaseURL: serviceAccount.DATABASE_URL,
-  //   databaseAuthVariableOverride: {
-  //     uid: 'my-service-worker'
-  //   }
-  // });
-
   firebase.initializeApp({
     apiKey: serviceAccount.API_KEY,
     authDomain: serviceAccount.AUTH_DOMAIN,
@@ -73,8 +58,8 @@ function _init() {
   ref = db.ref('/quotes');
 
   firebase.auth()
-          .signInWithEmailAndPassword(serviceAccount.EMAIL,
-                                      serviceAccount.PASSWORD)
+          .signInWithEmailAndPassword(serviceAccount.USER_EMAIL,
+                                      serviceAccount.USER_PASSWORD)
           .catch(function(error) {
             errorCode = error.code;
             errorMessage = error.message;
@@ -85,7 +70,6 @@ function _init() {
     console.log('databaseURL', serviceAccount.DATABASE_URL);
     if (errorCode) {
       console.log('Error during Firebase authentication:', errorCode, errorMessage);
-      console.log('Current user', firebase.auth().currentUser);
     }
   }
 }
@@ -100,9 +84,8 @@ function status(req, res) {
   };
 
   if (debug) {
-    console.log('User Email', serviceAccount.EMAIL);
+    console.log('User Email', serviceAccount.USER_EMAIL);
     console.log('Current user', firebase.auth().currentUser);
-    console.log('User UID', firebase.auth().currentUser.uid);
   }
 
   res.status(200).send(data);
@@ -118,8 +101,7 @@ function add(req, res) {
 
   if (debug) {
     console.log('captcha:', captcha);
-    console.log('model:');
-    console.log(model);
+    console.log('model:', model);
   }
 
   if (!model.quote || !model.author || !model.creator || !captcha) {
