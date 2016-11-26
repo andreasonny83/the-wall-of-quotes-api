@@ -100,7 +100,9 @@ function status(req, res) {
   };
 
   if (debug) {
-    console.log('Current user', firebase.auth().currentUser.uid);
+    console.log('User Email', serviceAccount.EMAIL);
+    console.log('Current user', firebase.auth().currentUser);
+    console.log('User UID', firebase.auth().currentUser.uid);
   }
 
   res.status(200).send(data);
