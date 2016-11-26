@@ -27,6 +27,7 @@ let ref;
 try {
   serviceAccount = require('../serviceAccount.json');
 } catch (e) {
+  serviceAccount = {};
   serviceAccount.DATABASE_URL = process.env.DATABASE_URL || 'DATABASE_URL';
   serviceAccount.API_KEY = process.env.API_KEY || 'API_KEY';
   serviceAccount.AUTH_DOMAIN = process.env.AUTH_DOMAIN || 'AUTH_DOMAIN';
