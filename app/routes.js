@@ -26,7 +26,16 @@ let ref;
 // serviceAccount stores the firebase serviceAccount configuration
 try {
   serviceAccount = require('../serviceAccount.json');
-} catch (e) {}
+} catch (e) {
+  serviceAccount.DATABASE_URL = process.env.DATABASE_URL || 'DATABASE_URL';
+  serviceAccount.API_KEY = process.env.API_KEY || 'API_KEY';
+  serviceAccount.AUTH_DOMAIN = process.env.AUTH_DOMAIN || 'AUTH_DOMAIN';
+  serviceAccount.EMAIL = process.env.EMAIL || 'EMAIL';
+  serviceAccount.PASSWORD = process.env.PASSWORD || 'PASSWORD';
+  serviceAccount.PROJECT_ID = process.env.PROJECT_ID || 'PROJECT_ID';
+  serviceAccount.CLIENT_EMAIL = process.env.CLIENT_EMAIL || 'CLIENT_EMAIL';
+  serviceAccount.PRIVATE_KEY = process.env.PRIVATE_KEY || 'PRIVATE_KEY';
+}
 
 _init();
 
@@ -36,41 +45,35 @@ router
   .post('/add', add);
 
 function _init() {
-  const databaseURL = process.env.DATABASE_URL || serviceAccount.DATABASE_URL || 'DATABASE_URL';
-  const apiKey = process.env.API_KEY || serviceAccount.API_KEY || 'API_KEY';
-  const authDomain = process.env.AUTH_DOMAIN || serviceAccount.AUTH_DOMAIN || 'AUTH_DOMAIN';
-  const email = process.env.EMAIL || serviceAccount.EMAIL || 'EMAIL';
-  const password = process.env.PASSWORD || serviceAccount.PASSWORD || 'PASSWORD';
-  // const projectId = process.env.PROJECT_ID || serviceAccount.PROJECT_ID || 'PROJECT_ID';
-  // const clientEmail = process.env.CLIENT_EMAIL || serviceAccount.CLIENT_EMAIL || 'CLIENT_EMAIL';
-  // const privateKey = process.env.PRIVATE_KEY || serviceAccount.PRIVATE_KEY || 'PRIVATE_KEY';
-
   let errorCode;
   let errorMessage;
 
+  // firebase-admin
+  //
   // firebase.initializeApp({
   //   credential: firebase.credential.cert({
-  //     projectId: projectId,
-  //     clientEmail: databaseURL,
-  //     privateKey: privateKey
+  //     projectId: serviceAccount.PROJECT_ID,
+  //     clientEmail: serviceAccount.DATABASE_URL,
+  //     privateKey: serviceAccount.PRIVATE_KEY
   //   }),
-  //   databaseURL: databaseURL,
+  //   databaseURL: serviceAccount.DATABASE_URL,
   //   databaseAuthVariableOverride: {
   //     uid: 'my-service-worker'
   //   }
   // });
 
   firebase.initializeApp({
-    apiKey: apiKey,
-    authDomain: authDomain,
-    databaseURL: databaseURL
+    apiKey: serviceAccount.API_KEY,
+    authDomain: serviceAccount.AUTH_DOMAIN,
+    databaseURL: serviceAccount.DATABASE_URL
   });
 
   db = firebase.database();
   ref = db.ref('/quotes');
 
   firebase.auth()
-          .signInWithEmailAndPassword(email, password)
+          .signInWithEmailAndPassword(serviceAccount.EMAIL,
+                                      serviceAccount.PASSWORD)
           .catch(function(error) {
             errorCode = error.code;
             errorMessage = error.message;
@@ -78,7 +81,7 @@ function _init() {
 
   if (debug) {
     console.log('start debug');
-    console.log('databaseURL', databaseURL);
+    console.log('databaseURL', serviceAccount.DATABASE_URL);
     if (errorCode) {
       console.log('Error during Firebase authentication:', errorCode, errorMessage);
       console.log('Current user', firebase.auth().currentUser);
