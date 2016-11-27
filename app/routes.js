@@ -13,49 +13,38 @@
 const router = require('express').Router();
 const pkginfo = require('pkginfo')(module);
 const firebase = require('firebase');
+const request = require('request');
+
 const appName = module.exports.name;
 const appVersion = module.exports.version;
 const environment = process.env.NODE_ENV || 'DEV';
 const debug = process.env.DEBUG === 'true' || environment === 'DEV';
 
 let serviceAccount;
-let db;
 let ref;
-
-// serviceAccount stores the firebase serviceAccount configuration
-try {
-  serviceAccount = require('../serviceAccount.json');
-} catch (e) {
-  serviceAccount = {};
-  serviceAccount.DATABASE_URL = process.env.DATABASE_URL || 'DATABASE_URL';
-  serviceAccount.API_KEY = process.env.API_KEY || 'API_KEY';
-  serviceAccount.AUTH_DOMAIN = process.env.AUTH_DOMAIN || 'AUTH_DOMAIN';
-  serviceAccount.USER_EMAIL = process.env.USER_EMAIL || 'USER_EMAIL';
-  serviceAccount.USER_PASSWORD = process.env.USER_PASSWORD || 'USER_PASSWORD';
-  serviceAccount.PROJECT_ID = process.env.PROJECT_ID || 'PROJECT_ID';
-  serviceAccount.CLIENT_EMAIL = process.env.CLIENT_EMAIL || 'CLIENT_EMAIL';
-  serviceAccount.PRIVATE_KEY = process.env.PRIVATE_KEY || 'PRIVATE_KEY';
-}
 
 _init();
 
 // Routing logic
 router
-  .get('/status', status)
-  .post('/add', add);
+  .get('/status', _status)
+  .post('/add', _add);
 
-function _init() {
+
+/**
+ * Private Scope
+ */
+
+function _firebaseInit() {
   let errorCode;
   let errorMessage;
 
-  firebase.initializeApp({
-    apiKey: serviceAccount.API_KEY,
-    authDomain: serviceAccount.AUTH_DOMAIN,
-    databaseURL: serviceAccount.DATABASE_URL
-  });
-
-  db = firebase.database();
-  ref = db.ref('/quotes');
+  firebase
+    .initializeApp({
+      apiKey: serviceAccount.API_KEY,
+      authDomain: serviceAccount.AUTH_DOMAIN,
+      databaseURL: serviceAccount.DATABASE_URL
+    });
 
   firebase.auth()
           .signInWithEmailAndPassword(serviceAccount.USER_EMAIL,
@@ -65,17 +54,37 @@ function _init() {
             errorMessage = error.message;
           });
 
+  ref = firebase.database().ref('/quotes');
+
   if (debug) {
     console.log('start debug');
-    console.log('databaseURL', serviceAccount.DATABASE_URL);
+    console.log('databaseURL:', serviceAccount.DATABASE_URL);
     if (errorCode) {
       console.log('Error during Firebase authentication:', errorCode, errorMessage);
     }
   }
 }
 
+function _init() {
+  // serviceAccount stores the firebase serviceAccount configuration
+  try {
+    serviceAccount = require('../serviceAccount.json');
+  } catch (e) {
+    serviceAccount = {};
+    serviceAccount.DATABASE_URL = process.env.DATABASE_URL || 'DATABASE_URL';
+    serviceAccount.API_KEY = process.env.API_KEY || 'API_KEY';
+    serviceAccount.AUTH_DOMAIN = process.env.AUTH_DOMAIN || 'AUTH_DOMAIN';
+    serviceAccount.USER_EMAIL = process.env.USER_EMAIL || 'USER_EMAIL';
+    serviceAccount.USER_PASSWORD = process.env.USER_PASSWORD || 'USER_PASSWORD';
+    serviceAccount.RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET || 'RECAPTCHA_SECRET';
+  }
+
+  // initialize Firebase and perform a user login
+  _firebaseInit();
+}
+
 // Private functions
-function status(req, res) {
+function _status(req, res) {
   const data = {
     app: appName,
     version: appVersion,
@@ -84,14 +93,14 @@ function status(req, res) {
   };
 
   if (debug) {
-    console.log('User Email', serviceAccount.USER_EMAIL);
-    console.log('Current user', firebase.auth().currentUser);
+    console.log('User Email:', serviceAccount.USER_EMAIL);
+    console.log('Current user:', firebase.auth().currentUser);
   }
 
   res.status(200).send(data);
 }
 
-function add(req, res) {
+function _add(req, res) {
   let captcha = req.body.captcha || null;
   let model = {
     quote: req.body.quote || null,
@@ -99,17 +108,37 @@ function add(req, res) {
     creator: req.body.creator || null
   };
 
+  if (!model.quote || !model.author || !model.creator || !captcha) {
+    return res.status(400).send();
+  }
+
+  const verificationUrl = `https://www.google.com/recaptcha/api/siteverify` +
+                          `?secret=${serviceAccount.RECAPTCHA_SECRET}` +
+                          `&response=${captcha}` +
+                          `&remoteip=${req.connection.remoteAddress}`;
+
   if (debug) {
     console.log('captcha:', captcha);
     console.log('model:', model);
   }
 
-  if (!model.quote || !model.author || !model.creator || !captcha) {
-    return res.status(400).send();
-  }
+  request(verificationUrl, function(error, response, body) {
+    body = JSON.parse(body);
+
+    if (body.success !== undefined && !body.success) {
+      return res.json({
+        'responseCode': 1,
+        'responseDesc': 'Failed captcha verification'
+      });
+    }
+
+    res.json({
+      'responseCode': 0,
+      'responseDesc': 'Sucess'
+    });
+  });
 
   ref.push(model);
-  res.status(200).send();
 }
 
 module.exports = router;

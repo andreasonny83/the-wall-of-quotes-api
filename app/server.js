@@ -18,33 +18,38 @@ const admin = require('firebase-admin');
 
 const environment = process.env.NODE_ENV || 'DEV';
 const serverPort = process.env.PORT || 3012;
+const debug = process.env.DEBUG === 'true' || environment === 'DEV';
+
+let serviceAccount = {};
 
 const app = express();
 let server;
 
+try {
+  serviceAccount = require('../serviceAccount.json');
+} catch (e) {}
+
 app.disable('x-powered-by');
 
-app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 
 app.use(function (req, res, next) {
-  // res.header('Access-Control-Allow-Origin', 'https://the-wall-of-quotes.firebaseapp.com/');
+  const whitelistUrl = serviceAccount.CLIENT_URL || process.env.CLIENT_URL || 'CLIENT_URL';
+
+  if (debug) {
+    console.log('Access-Control-Allow-Origin:', whitelistUrl);
+  }
 
   // Website you wish to allow to connect
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', whitelistUrl);
   // Request headers you wish to allow
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin');
   // Request methods you wish to allow
   res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
-
-  // res.setHeader("Access-Control-Allow-Origin", "*");
-  // res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  // res.setHeader('Access-Control-Allow-Credentials', true);
 
   next();
 });

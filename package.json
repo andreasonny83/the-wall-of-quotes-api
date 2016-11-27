@@ -1,6 +1,6 @@
 {
   "name": "the-wall-of-quotes-api",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "description": "API for serving The wall of quotes webapp",
   "main": "app/server.js",
   "scripts": {
@@ -23,7 +23,8 @@
     "firebase": "^3.6.1",
     "kerberos": "0.0.22",
     "morgan": "^1.7.0",
-    "pkginfo": "^0.4.0"
+    "pkginfo": "^0.4.0",
+    "request": "^2.79.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
