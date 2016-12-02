@@ -111,7 +111,11 @@ function _add(req, res) {
     time: firebase.database.ServerValue.TIMESTAMP
   };
 
-  if (!model.quote || !model.author || !model.creator || !captcha) {
+  if (!model.quote ||
+      !model.author ||
+      !model.creator ||
+      !captcha ||
+      model.quote.length < 10) {
     return res.status(400).send();
   }
 
