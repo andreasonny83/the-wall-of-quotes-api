@@ -91,13 +91,12 @@ function _status(req, res) {
     app: appName,
     version: appVersion,
     status: 200,
-    firebaseTimestamp: firebase.database.ServerValue.TIMESTAMP,
     message: 'OK - ' + Math.random().toString(36).substr(3, 8)
   };
 
   if (debug) {
     console.log('User Email:', serviceAccount.USER_EMAIL);
-    console.log('Current user:', firebase.auth().currentUser);
+    console.log('Current user:', firebase.auth().currentUser.uid);
   }
 
   res.status(200).send(data);
