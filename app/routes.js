@@ -54,6 +54,8 @@ function _firebaseInit() {
             errorMessage = error.message;
           });
 
+  firebase.database.enableLogging(true);
+
   ref = firebase.database().ref('/quotes');
 
   if (debug) {
@@ -89,6 +91,7 @@ function _status(req, res) {
     app: appName,
     version: appVersion,
     status: 200,
+    firebaseTimestamp: firebase.database.ServerValue.TIMESTAMP,
     message: 'OK - ' + Math.random().toString(36).substr(3, 8)
   };
 
@@ -105,7 +108,8 @@ function _add(req, res) {
   let model = {
     quote: req.body.quote || null,
     author: req.body.author || null,
-    creator: req.body.creator || null
+    creator: req.body.creator || null,
+    time: firebase.database.ServerValue.TIMESTAMP
   };
 
   if (!model.quote || !model.author || !model.creator || !captcha) {
