@@ -2,7 +2,7 @@
  * the-wall-of-quotes-api
  *
  * @license
- * Copyright (c) 2016 by andreasonny83. All Rights Reserved.
+ * Copyright (c) 2016-2017 by andreasonny83. All Rights Reserved.
  *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at
@@ -108,7 +108,7 @@ function _add(req, res) {
     quote: req.body.quote || null,
     author: req.body.author || null,
     creator: req.body.creator || null,
-    time: firebase.database.ServerValue.TIMESTAMP
+    time: 0 - firebase.database.ServerValue.TIMESTAMP
   };
 
   if (!model.quote ||

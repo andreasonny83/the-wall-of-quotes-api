@@ -2,7 +2,7 @@
  * the-wall-of-quotes-api
  *
  * @license
- * Copyright (c) 2016 by andreasonny83. All Rights Reserved.
+ * Copyright (c) 2016-2017 by andreasonny83. All Rights Reserved.
  *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at
