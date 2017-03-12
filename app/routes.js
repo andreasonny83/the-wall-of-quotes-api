@@ -25,11 +25,25 @@ let ref;
 
 _init();
 
-// Routing logic
-router
-  .get('/status', _status)
-  .post('/add', _add);
+router.use(function (req, res, next) {
+  const whitelistUrl = serviceAccount.CLIENT_URL || process.env.CLIENT_URL || 'CLIENT_URL';
 
+  if (debug) {
+    console.log('Access-Control-Allow-Origin:', whitelistUrl);
+  }
+
+  // Website you wish to allow to connect
+  res.header('Access-Control-Allow-Origin', whitelistUrl);
+  // Request headers you wish to allow
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin');
+  // Request methods you wish to allow
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+
+  next();
+});
+
+// Routing logic
+router.post('/add', _add);
 
 /**
  * Private Scope
@@ -83,23 +97,6 @@ function _init() {
 
   // initialize Firebase and perform a user login
   _firebaseInit();
-}
-
-// Private functions
-function _status(req, res) {
-  const data = {
-    app: appName,
-    version: appVersion,
-    status: 200,
-    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
-  };
-
-  if (debug) {
-    console.log('User Email:', serviceAccount.USER_EMAIL);
-    console.log('Current user:', firebase.auth().currentUser.uid);
-  }
-
-  res.status(200).send(data);
 }
 
 function _add(req, res) {

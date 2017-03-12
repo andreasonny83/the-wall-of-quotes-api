@@ -14,11 +14,13 @@ const express = require('express');
 const router = require('express').Router();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const admin = require('firebase-admin');
+const pkginfo = require('pkginfo')(module);
 
 const environment = process.env.NODE_ENV || 'DEV';
 const serverPort = process.env.PORT || 3012;
 const debug = process.env.DEBUG === 'true' || environment === 'DEV';
+const appName = module.exports.name;
+const appVersion = module.exports.version;
 
 let serviceAccount = {};
 
@@ -37,24 +39,19 @@ app.use(bodyParser.urlencoded({extended: true}));
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 
-app.use(function (req, res, next) {
-  const whitelistUrl = serviceAccount.CLIENT_URL || process.env.CLIENT_URL || 'CLIENT_URL';
-
-  if (debug) {
-    console.log('Access-Control-Allow-Origin:', whitelistUrl);
-  }
-
-  // Website you wish to allow to connect
-  res.header('Access-Control-Allow-Origin', whitelistUrl);
-  // Request headers you wish to allow
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin');
-  // Request methods you wish to allow
-  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
-
-  next();
-});
-
 app.use('/', require('./routes'));
+app.get('/status', _status);
+
+function _status(req, res) {
+  const data = {
+    app: appName,
+    version: appVersion,
+    status: 200,
+    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
+  };
+
+  res.status(200).send(data);
+}
 
 console.log('About to crank up node');
 console.log('PORT=' + serverPort);
