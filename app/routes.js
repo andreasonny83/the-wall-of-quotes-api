@@ -107,7 +107,7 @@ function _add(req, res) {
     quote: req.body.quote || null,
     author: req.body.author || null,
     creator: req.body.creator || null,
-    time: 0 - firebase.database.ServerValue.TIMESTAMP
+    time: - (firebase.database.ServerValue.TIMESTAMP)
   };
 
   if (!model.quote ||
