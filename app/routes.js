@@ -30,7 +30,6 @@ router
   .get('/status', _status)
   .post('/add', _add);
 
-
 /**
  * Private Scope
  */
@@ -108,7 +107,7 @@ function _add(req, res) {
     quote: req.body.quote || null,
     author: req.body.author || null,
     creator: req.body.creator || null,
-    time: firebase.database.ServerValue.TIMESTAMP
+    time: 0 - firebase.database.ServerValue.TIMESTAMP
   };
 
   if (!model.quote ||
