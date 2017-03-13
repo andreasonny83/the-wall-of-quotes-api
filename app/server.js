@@ -53,16 +53,16 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use('/', require('./routes'));
+app.use('/', require('./routes').routes);
 
 console.log('About to crank up node');
 console.log('PORT=' + serverPort);
 console.log('NODE_ENV=' + environment);
 
 server = app.listen(serverPort, function() {
-  const host = server.address().address;
+  const host = server.address().address === '::' ? 'localhost' : server.address().address;
   const port = server.address().port;
-
+  console.log(server.address());
   console.log('Express server listening at http://%s:%s', host, serverPort);
 
   console.log([

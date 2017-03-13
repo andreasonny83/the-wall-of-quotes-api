@@ -90,7 +90,8 @@ function _status(req, res) {
     app: appName,
     version: appVersion,
     status: 200,
-    message: 'OK - ' + Math.random().toString(36).substr(3, 8)
+    message: 'OK - ' + Math.random().toString(36).substr(3, 8),
+    time: -Date.now()
   };
 
   if (debug) {
@@ -107,7 +108,7 @@ function _add(req, res) {
     quote: req.body.quote || null,
     author: req.body.author || null,
     creator: req.body.creator || null,
-    time: parseInt(- firebase.database.ServerValue.TIMESTAMP)
+    time: -Date.now()
   };
 
   if (!model.quote ||
@@ -147,4 +148,4 @@ function _add(req, res) {
   ref.push(model);
 }
 
-module.exports = router;
+exports.routes = router;
