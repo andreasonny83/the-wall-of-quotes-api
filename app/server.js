@@ -37,7 +37,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('dev'));
 
 app.use(function (req, res, next) {
-  const whitelistUrl = (serviceAccount.CLIENT_URL || process.env.CLIENT_URL || 'CLIENT_URL').split(' ');
+  /** 
+   * urls should be semicolumn separated
+   * eg. http://my.website.com;https://my.website.com;http://wwww.another.website.com
+   */
+  const whitelistUrl = (serviceAccount.CLIENT_URL || process.env.CLIENT_URL || 'CLIENT_URL').split(';');
   const origin = req.headers.origin;
 
   if (debug) {
@@ -47,6 +51,7 @@ app.use(function (req, res, next) {
 
   // Website you wish to allow to connect
   if (whitelistUrl.indexOf(origin) > -1) {
+    console.log('Whitelisting ' + origin + ' domain');
     res.header('Access-Control-Allow-Origin', origin);
   }
   // Request headers you wish to allow
