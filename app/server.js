@@ -37,14 +37,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('dev'));
 
 app.use(function (req, res, next) {
-  const whitelistUrl = serviceAccount.CLIENT_URL || process.env.CLIENT_URL || 'CLIENT_URL';
+  const whitelistUrl = (serviceAccount.CLIENT_URL || process.env.CLIENT_URL || 'CLIENT_URL').split(' ');
+  const origin = req.headers.origin;
 
   if (debug) {
+    console.log('Request coming from:', origin);
     console.log('Access-Control-Allow-Origin:', whitelistUrl);
   }
 
   // Website you wish to allow to connect
-  res.header('Access-Control-Allow-Origin', whitelistUrl);
+  if (whitelistUrl.indexOf(origin) > -1) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   // Request headers you wish to allow
   res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin');
   // Request methods you wish to allow
