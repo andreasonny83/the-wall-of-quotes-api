@@ -6,7 +6,7 @@
  *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at
- * https://raw.githubusercontent.com/Azurasky1/DragonArena/develop/LICENSE
+ * https://github.com/andreasonny83/the-wall-of-quotes-api/blob/master/LICENSE
  */
 'use strict';
 
